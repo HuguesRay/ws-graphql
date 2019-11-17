@@ -1,0 +1,20 @@
+{
+  "name": "solution",
+  "version": "1.0.0",
+  "description": "solution API for the workshop",
+  "main": "index.js",
+  "author": "Jessy Anglehart-Nunes",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "graphql": "^14.5.8",
+    "graphql-request": "^1.8.2",
+    "graphql-yoga": "^1.18.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}

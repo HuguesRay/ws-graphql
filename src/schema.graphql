@@ -1,0 +1,260 @@
+scalar Date
+
+"""
+Les requêtes à implémenter.
+Chacune d'entre elles produira une statistique sur l'un des trois ensembles de données ouvertes de la ville de Montréal.
+Pour chacune des requêtes, un défi dans CTFD vous permettra de vérifier votre implémentation.
+Pour chaque requête à implémenter, je vous recommande de lire la documentation du type retourné.
+"""
+type Query {
+  """
+  On s'intéresse ici aux infractions commises au sein d'une même journée.
+  Pour chaque journée, on aimerait connaître les montants des amendes qui ont été données.
+  On s'intéresse également à la moyenne des montants.
+  Conseil: triez les résultats selon le nombre d'amendes donné en une journée.
+  """
+  aLotOfFines: [Fine!]!
+
+  """
+  Entre 2015 et 2019, on constate que la même catégorie de crime a nécessité le plus d'interventions policières.
+  On va donc faire une "analyse" des crimes, mais en ajoutant une règle supplémentaire.
+  Chaque catégorie de crime ne peut pas se retrouver deux fois dans le résultat de la requête.
+  On procèdera donc par élimination, en commençant par l'année 2015.
+
+  Par exemple, si la catégorie "Introduction" est la catégorie ayant nécessité le plus d'interventions policières,
+  on ne pourra plus réutiliser cette catégorie pour les années à venir.
+  """
+  breakdownOfCrimes: [CrimesBreakdown!]!
+
+  """
+  Un capteur est installé à l'intersection Peel / Notre Dame, l'intersection de l'ÉTS.
+  On s'intéresse donc, entre 2014 et 2018, le pourcentage des enregistrements de chaque catégorie.
+  """
+  etsProportions: [TransportBreakdown!]!
+
+  """
+  Certains établissements ont reçu plusieurs amendes.
+  On s'intéresse donc ici à une analyse du montant total des amendes reçue par un établissement.
+  On s'intéresse seulement à l'établissement nonobstant si celui-ci a une ou plusieurs succursales.
+  """
+  highSteaks: [OffenderAmounts!]!
+
+  """
+  L'ensemble de données de la ville de Montréal contient un champ pour la date d'infraction et un autre pour la date de jugement.
+  D'ailleurs, pour certaines infractions, on peut constater de longs délais avant un jugement.
+  On s'intéresse donc ici au temps d'attente entre la date de l'infraction et la date du jugement.
+  On aimerait également connaître la moyenne des temps d'attentes et, pour chaque infraction, l'écart par rapport à la moyenne.
+  """
+  howLongBeforeTheJudgment: WaitingJudgementStats!
+
+  """
+  Entre 5h et 9h, plusieurs milliers de personnes se déplacent dans l'île de Montréal.
+  On s'intéresse donc ici au nombre d'enregistrements pour chacune des intersections.
+  Conseil: triez votre résultat en ordre décroissant d'enregistrements.
+  """
+  thatsAWholeLotOfCommutes: [MorningCommuteCount!]!
+
+  """
+  Les données de la ville de Montréal possèdent plusieurs enregistrements sur les camions.
+  On s'intéresse ici à la répartition des camions qui ont été captés.
+  Le pourcentage d'enregistrement, dans cette requête, concerne seulement les camions.
+  Il ne faut pas comparer ceci à d'autres véhicules.
+  """
+  trucksAndMoreTrucks: [TransportBreakdown!]!
+
+  """
+  On s'intéresse ici aux quarts où il y a eu le plus et le moins d'interventions policières, pour chaque année.
+  """
+  whenDoTheyHappen: [ShiftCrimeAnalysis!]!
+
+  """
+  Un chiffre quelque peu inusité serait certainement de connaître la direction où le plus de piétons se déplacent.
+  Les capteurs de la ville de Montréal prennent seulement quatre directions en considération: nord, ouest, sud, est.
+  """
+  whereDoPedestriansGo: [DirectionBreakDown!]!
+}
+
+"""
+Les amendes reçues pour une journée donnée.
+Elles regroupent des montants d'amendes qui ont été reçus la même journée.
+"""
+type Fine {
+  """
+  Le jour où les amendes ont été distribuées.
+  Le présent champ se base sur la date d'infraction et non la date de jugement.
+  """
+  day: Date!
+
+  """
+  Le montant moyen en amende qui a été distribuée au cours de la même journée.
+  """
+  averageAmount: Int!
+
+  """
+  L'ensemble des montants des amendes.
+  La moyenne des éléments de la liste doit correspondre au montant d'averageAmount.
+  """
+  amounts: [Int!]!
+}
+
+"""
+Une analyse qui donne le crime le plus "populaire" pour une année donnée.
+"""
+type CrimesBreakdown {
+  """
+  L'année d'étude.
+  """
+  year: Int!
+
+  """
+  Le crime le plus "populaire" selon les spécifications du défi: breakdown of crimes.
+  """
+  crime: String!
+}
+
+"""
+Un élément d'analyse du transport.
+Pour une catégorie donnée, on a un pourcentage des enregistrements.
+Ces pourcentages sont établis avec des conditions supplémentaires selon les requêtes.
+"""
+type TransportBreakdown {
+  """
+  La catégorie d'enregistrement effectué.
+  Cette catégorie provient des définitions de la ville de Montréal.
+  """
+  category: String!
+
+  """
+  Le pourcentage associé à cette catégorie.
+  """
+  percentage: Float!
+}
+
+"""
+Le total des amendes payées par un établissement.
+Ce total est calculé indépendamment des adresses.
+Par exemple, si deux restaurants "3 Brasseurs" commettent des infractions, les deux partageront le même total.
+"""
+type OffenderAmounts {
+  """
+  L'établissement qui a reçu des amendes, indépendamment des différentes adresses que celui-ci peut avoir.
+  """
+  establishment: String!
+
+  """
+  Le montant total d'amende qu'a reçu un établissement.
+  """
+  totalFine: Int!
+}
+
+"""
+Ce type correspond à une entrée de temps d'attente entre la date d'infraction et la date de jugement.
+Voir aussi: WaitingJudgmentStats.
+"""
+type WaitingJudgementTime {
+  """
+  Le temps qui s'est écoulé, en jour entre la date d'infraction et la date de jugement.
+  La donnée est arrondie à l'unité prêt.
+  """
+  waitingTime: Int!
+
+  """
+  Représente la différence, en valeur absolue, par rapport à la moyenne.
+  """
+  differenceWithAverage: Int!
+}
+
+"""
+Offre un portrait global des temps d'attente entre les dates d'infraction et les dates de jugement.
+Les entrées permettent de donner tous les temps d'attente du jeu de donnée de la ville de Montréal.
+"""
+type WaitingJudgementStats {
+  """
+  Le temps d'attente moyen entre la date d'infraction et la date de jugement.
+  """
+  averageWaitingTime: Int!
+
+  """
+  Contiens toutes les entrées de temps d'attente.
+  Voir: WaitingJudgementTime.
+  """
+  entries: [WaitingJudgementTime!]!
+}
+
+"""
+Offre le nombre d'entrées qui est enregistré à une intersection donnée.
+Les données prennent toutes les catégories fournies par la ville de Montréal.
+"""
+type MorningCommuteCount {
+  """
+  L'intersection où se trouve le capteur.
+  """
+  intersection: String!
+
+  """
+  Le nombre d'entrées, tous types confondus.
+  Ici, on considère qu'un véhicule joue le rôle d'une personne.
+  Il faut donc compter les enregistrements seulement.
+  """
+  numberOfCommuters: Int!
+}
+
+"""
+Fournis le nombre d'interventions policières pour un quart donné.
+Voir: ShiftCrimeAnalysis.
+"""
+type CrimesForShift {
+  """
+  Le quart tel que fourni par l'ensemble de données de la ville de Montréal.
+  Les valeurs possibles sont: jour, soir, nuit.
+  """
+  shift: String!
+
+  """
+  Le nombre d'interventions policières survenu durant le quart donné.
+  """
+  numberOfCrimes: Int!
+}
+
+"""
+Une analyse sur les quarts où il y a eu le plus et le moins d'intervention policières pour une année donnée.
+"""
+type ShiftCrimeAnalysis {
+  """
+  Fournis de l'information relative au quart où il y a eu le plus d'intervention policière.
+  Voir: CrimesForShift
+  """
+  most: CrimesForShift!
+
+  """
+  Fournis de l'information relative au quart où il y a eu le moins d'intervention policière.
+  Voir: CrimesForShift
+  """
+  less: CrimesForShift!
+
+  """
+  La différence du nombre d'interventions policières entre le quart où il y en a eu le plus et celui où il y en a eu le moins.
+  """
+  difference: Int!
+
+  """
+  L'année à l'étude.
+  """
+  year: Int!
+}
+
+"""
+Une analyse du nombre de piétons selon la direction où ces piétons se dirigent.
+"""
+type DirectionBreakDown {
+  """
+  La direction à l'étude.
+  Les valeurs possibles sont : nord, sud, est, ouest
+  """
+  direction: String!
+
+  """
+  Le nombre de piétons allant dans cette direction.
+  """
+  numberOfPedestrians: Int!
+}
