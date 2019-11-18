@@ -10,7 +10,7 @@ L'ensemble des requêtes et resolvers à implémenter se trouve dans le fichier 
 
 ## Les ensembles de données
 
-Les ensembles de données se trouvent sur cet [API](https://api.goyette.dev). Sur ce lien, vous trouverez un Playground afin que vous puissiez interagir avec les données de la ville de Montréal. L'API fournit trois ensembles de données:
+Les ensembles de données se trouvent sur cet [API](http://35.203.42.156:8081/). Sur ce lien, vous trouverez un Playground afin que vous puissiez interagir avec les données de la ville de Montréal. L'API fournit trois ensembles de données:
 
 - Le comptage des véhicules et piétons aux intersections de la ville de Montréal, de 2014 à 2018.
 - Les infractions aux inspections alimentaires
@@ -38,7 +38,7 @@ La commande `npm run dev` démarrera votre application avec Nodemon. Ainsi, à c
 
 ## Les défis
 
-Dans le but de valider votre compréhension, chacune des requêtes implémentées est reliée à un défi dans le [CTFD](https://goyette.dev). Les défis poseront donc une question en lien avec la requête implémentée. Dans les défis, vous pouvez également lire le format de la réponse.
+Dans le but de valider votre compréhension, chacune des requêtes implémentées est reliée à un défi dans le [CTFD](http://35.203.42.156/). Les défis poseront donc une question en lien avec la requête implémentée. Dans les défis, vous pouvez également lire le format de la réponse.
 
 ### Les défis _Impressione-moi_.
 
